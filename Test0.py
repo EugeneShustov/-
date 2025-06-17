@@ -65,9 +65,9 @@ class BookingSystem:
     def make_booking(self, passenger, transport_id, seat_number):
         transport = self.transports.get(transport_id)
         if not transport:
-            return "Не найдено"
+            return f"Такой ID {transport_id} не найден"
         if seat_number not in transport.get_available_seats():
-            return "Место занято"
+            return f"Место {seat_number} уже забронировано или недоступно"
 
         booking = Booking(passenger, transport, seat_number)
         transport.book_seat(seat_number)
@@ -90,11 +90,25 @@ def main_menu():
         choice = input("Выберите: ")
 
         if choice == "1":
+            transport_type = input("Тип транспорта (Bus, Train, Plane): ")
             transport_id = input("ID транспорта: ")
             capacity = int(input("Мест: "))
-            transport = Transport(transport_id, capacity)
+
+            if transport_type.lower() == "bus":
+                itinerary = input("Маршрут: ")
+                transport = Bus(transport_id, capacity, itinerary)
+            elif transport_type.lower() == "train":
+                wagons = int(input("Вагоны: "))
+                transport = Train(transport_id, capacity, wagons)
+            elif transport_type.lower() == "plane":
+                model = input("Модель: ")
+                transport = Plane(transport_id, capacity, model)
+            else:
+                print("Ошибка, не найден тип транспорта")
+                continue
+
             system.add_transport(transport)
-            print("добавлен")
+            print(f"{transport_type} №{transport_id} добавлен")
 
         elif choice == "2":
             passenger_name = input("Имя: ")
