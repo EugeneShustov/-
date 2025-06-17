@@ -53,11 +53,15 @@ class Passenger:
     def __str__(self):
         return f"Пассажир {self.name}, паспорт: {self.passport_number}"
 
-
 class BookingSystem:
     def __init__(self):
         self.transports = {}
         self.bookings = []
+        self.last_id = 100
+
+    def generate_id(self):
+        self.last_id += 1
+        return str(self.last_id)
 
     def add_transport(self, transport):
         self.transports[transport.id] = transport
@@ -77,7 +81,6 @@ class BookingSystem:
     def list_bookings(self):
         return [str(booking) for booking in self.bookings]
 
-
 def main_menu():
     system = BookingSystem()
 
@@ -90,17 +93,22 @@ def main_menu():
         choice = input("Выберите: ")
 
         if choice == "1":
-            transport_type = input("Тип транспорта (Bus, Train, Plane): ")
-            transport_id = input("ID транспорта: ")
+            print("\nВыберите тип транспорта:")
+            print("1. Автобус")
+            print("2. Поезд")
+            print("3. Самолёт")
+            transport_type = input("Какой транспорт: ")
+
+            transport_id = system.generate_id()
             capacity = int(input("Мест: "))
 
-            if transport_type.lower() == "bus":
+            if transport_type == "1":
                 itinerary = input("Маршрут: ")
                 transport = Bus(transport_id, capacity, itinerary)
-            elif transport_type.lower() == "train":
+            elif transport_type == "2":
                 wagons = int(input("Вагоны: "))
                 transport = Train(transport_id, capacity, wagons)
-            elif transport_type.lower() == "plane":
+            elif transport_type == "3":
                 model = input("Модель: ")
                 transport = Plane(transport_id, capacity, model)
             else:
@@ -108,7 +116,7 @@ def main_menu():
                 continue
 
             system.add_transport(transport)
-            print(f"{transport_type} №{transport_id} добавлен")
+            print(f"Транспорт {transport.id} добавлен")
 
         elif choice == "2":
             passenger_name = input("Имя: ")
